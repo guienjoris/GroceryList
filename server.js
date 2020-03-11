@@ -18,13 +18,33 @@ app.use(express.json());
 app.use(cors());
 
 app.post('/mailer',(req,res)=>{
-    console.log(req.body)
-   
+    
+    let message = "";
+    let messageAdd=[];
+    for(i=0;i<req.body.item.length;i++){
+        messageAdd.push(`<tr>
+        <td>${req.body.item[i].item}</td>
+        <td>${req.body.item[i].price}</td>
+        </tr>`)
+    }
+    message =`<thead>
+    <tr>
+      <th colspan="2"> Liste de courses</th>
+    </tr>
+  </thead>
+  <tbody><tr>
+    <th>Item</th>
+    <th>Prix</th>
+  </tr>
+  ${messageAdd.join("")}
+  </tbody>
+  </table>`
+    console.log(messageAdd.join(""))
     let mailContent={
         from: 'Liste des courses',
         to: req.body.mail,
         subject: 'Listes des courses',
-        html:`Listes des courses: ${req.body.item}, ${req.body.price}
+        html:`${message}
         pour un prix total de: ${req.body.priceTotal} €`
     }
     transport.sendMail(mailContent,(error,req,res)=>{
